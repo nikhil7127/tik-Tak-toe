@@ -1,88 +1,87 @@
-row =["-"]*9
-import random as r
-import time as t
-r1=0
-I=0
-def display():
-    print(f"{row[0] } | {row[1] } | { row[2]} ")
-    print(f"{row[3] } | { row[4]} | { row[5]} ")
-    print(f"{row[6] } | { row[7]} | { row[8]} ") 
-display()
-def guess():
-    while(1):
-        try:
-            enter = int(input("Your Turn: "))
-            if(enter<1 or enter>9):
-                print("Enter Value Must Be In Between 1-9")
-        except:
-            print("Entered option must be integer")
-        if(enter>0 and enter<10):
-            break
-    return enter
-comp=[]
-me=[]
-main=[]
-def user():
-    g = guess()
-    if g not in main:
-        me.append(g)
-        main.append(g)
-        row[g-1] = "O"
-        display()
-    else:
-        user()
-   
+import random as r 
+import time as t 
 
-def CompOption():
-        computer = r.randint(1,9)
-        if computer not in main:
-            comp.append(computer)
-            main.append(computer)
-            row[computer-1] ="X"
-            display()
-        else:
-            CompOption()
-        
+def printTTT(board):
+    for a in range(len(board)):
+        for b in range(len(board[0])):
+            if(b<len(board)-1):
+                print(f" {board[a][b]} ",end="|")
+            else:
+                print(f" {board[a][b]} ",end="")
+        print()
+        if(a<len(board)-1):
+            print(" -"*(len(board)+2),)
 
+
+
+class Planting:
+
+    def __init__(self):
+        self.board = [[" "," "," "],[" "," "," "],[" "," "," "]]
+        self.check = []
+        for a in range(0,len(self.board)):
+            for b in range(0,len(self.board[0])):
+                if(self.board[a][b] == " "):
+                    self.check.append((a,b))
+
+    def user(self):
+        while(1):
+            try:
+                enter = int(input())
+                if(0<=enter<=9):
+                    row,col = (enter-1)//3,(enter-1)%3
+                    if (row,col) in self.check:
+                        break
+                    else:
+                        2/0
+            except:
+                print("Enter valid value")
+        if (row,col) in self.check:
+            self.board[row][col] = "O"
+            self.check.remove((row,col))
     
+    def computer(self):
+        let = r.choice(self.check)
+        self.board[let[0]][let[1]] = "X"
+        self.check.remove(let)
+    
+    def checkCase(self):
+        k = self.board
+        if(k[0][0]==k[1][1]==k[2][2]):
+            if(k[0][0]!=" "):
+                return (True,k[0][0])
+        if(k[2][0]==k[1][1]==k[0][2]):
+            if(k[2][0]!=" "):
+                return (True,k[2][0])
+        for a in range(3):
+            if(k[a][0]==k[a][1]==k[a][2]):
+                if(k[a][0]!=" "):
+                    return (True,k[1][0])
+        for a in range(3):
+            if(k[0][a]==k[1][a]==k[2][a]):
+                if(k[0][a]!=" "):
+                    return (True,k[2][1])
+        return (False,0)
 
-def mainOne():
-  
-    while(1):
-        if(row[0] == row[1] == row[2] == "O" or row[0] == row[3] == row[6] =="O" or row[2] == row[5] == row[8] =="O" or row[3] == row[4] == row[5] == "O" or row[1] == row[4] == row[7] == "O" or row[8] == row[7] == row[6] =="O" or row[0] == row[4] == row[8] =="O" or row[2]==row[4] == row[6]=="O"):
-            print("User win")
-            break
-        if(row[0] == row[1] == row[2] == "X" or row[0] == row[3] == row[6] =="X" or row[2] == row[5] == row[8] =="X" or row[3] == row[4] == row[5] == "X" or row[1] == row[4] == row[7] == "X" or row[8] == row[7] == row[6] =="X" or row[0] == row[4] == row[8] =="X" or row[2]==row[4] == row[6]=="X"):
-            print("Computer win")
-            break
-        if(len(main)==9):
-            break
-        print("opponent turn ")
-        print("opponent selecting....")
-        t.sleep(1)
-        CompOption()
-       
-        if(row[0] == row[1] == row[2] == "O" or row[0] == row[3] == row[6] =="O" or row[2] == row[5] == row[8] =="O" or row[3] == row[4] == row[5] == "O" or row[1] == row[4] == row[7] == "O" or row[8] == row[7] == row[6] =="O" or row[0] == row[4] == row[8] =="O" or row[2]==row[4] == row[6]=="O"):
-            print("User win")
-            break
-        if(row[0] == row[1] == row[2] == "X" or row[0] == row[3] == row[6] =="X" or row[2] == row[5] == row[8] =="X" or row[3] == row[4] == row[5] == "X" or row[1] == row[4] == row[7] == "X" or row[8] == row[7] == row[6] =="X" or row[0] == row[4] == row[8] =="X" or row[2]==row[4] == row[6]=="X"):
-            print("Computer win")
-            break
-        if(len(main)==9):
-            break
-        user()
-        print("---------------------------------------------------------------------------------------")
-mainOne()
-while(1):
-    ins = input("Play Again(Y/N): ")
-    if(ins == "Y" or ins=="y"):
-        row = ["-"]*9
-        comp=[]
-        me=[]
-        main=[]
-        mainOne()
-    if(ins == "N" or ins=="n"):
+
+play =  Planting()
+while(play.check):
+    print("Selecting...")
+    play.computer()
+    t.sleep(1)
+    print()
+    printTTT(play.board)
+    save = play.checkCase()
+    if(not play.check or save[0]):
+        print(f"{save[1]} won")
         break
-    else:
-        print("Enter Valid Option")
-    
+    play.user()
+    t.sleep(1)
+    print()
+    printTTT(play.board)
+    print()
+    save = play.checkCase()
+    if(save[0]):
+        print(f"{save[1]} won")
+        break
+
